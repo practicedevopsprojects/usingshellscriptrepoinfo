@@ -1,12 +1,12 @@
 #!/bin/bash
-# GitHub API URL
-API_URL="https://api.github.com"
+# GitHub API base URL
+API_URL="https://api.github.com" 
 
 # GitHub username and personal access token
 USERNAME=$username
 TOKEN=$token
 
-# User and Repository information
+# User/organization and Repository information
 REPO_OWNER=$1
 REPO_NAME=$2
 
@@ -17,6 +17,8 @@ function github_api_get {
 
     # Send a GET request to the GitHub API with authentication
     curl -s -u "${USERNAME}:${TOKEN}" "$url"
+    # -s flag stands “silent” or “quiet,This is particularly useful for scripting or automation, where you don’t want unnecessary information,that only the relevant data is displayed without any additional noise.making the output cleaner.
+    # -u flag specifies the username and password (or token) for basic authentication
 }
 
 # Function to list users with read access to the repository
@@ -25,9 +27,12 @@ function list_users_with_read_access {
 
     # Fetch the list of collaborators on the repository
     collaborators="$(github_api_get "$endpoint" | jq -r '.[] | select(.permissions.pull == true) | .login')"
+    # here dot specifies whatever parameters are there in json data we call that perameters using dot(.) operator
 
     # Display the list of collaborators with read access
+   # -z flag checks whether the variable $collaborators is empty or not
     if [[ -z "$collaborators" ]]; then
+
         echo "No users with read access found for ${REPO_OWNER}/${REPO_NAME}."
     else
         echo "Users with read access to ${REPO_OWNER}/${REPO_NAME}:"
